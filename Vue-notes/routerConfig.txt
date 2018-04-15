@@ -1,0 +1,67 @@
+/*===============================================================================
+                                 路由配置总结：
+1、安装vue-router：npm install vue-router --save
+2、导入路由vue-router：import VueRouter from 'vue-router'
+3、使用Vue.use(VueRouter)将vue与vue-router关联
+4、配置一个路由对象：let router = new VueRouter
+5、在new Vue中写入router
+6、在需要插入router配置的组件的部分使用<router-view></router-view>标签
+7、可以使用<router-link :to="{path:'detail'}">to lesson2</router-link>，
+   在点击时直接切换到link的路由地址
+=================================================================================*/
+
+import VueRouter from 'vue-router'
+Vue.use(VueRouter)
+let router = new VueRouter({
+	mode: 'history',
+	routes: [ //什么样的地址显示什么样的页面
+		{
+			path: '/:color/othermsg/:type', //必须填入参数，router才能匹配成功
+			component: lesson8
+		},
+		{
+			name: 'detailPage', //命名路由
+			path: '/orderList',
+			component: {
+				viewA: lesson1, // 在/orderList路由下视图viewA插入lesson1，视图ViewB插入lesson2
+				viewB: lesson2
+			}
+		},
+		{
+			path: '/detail',
+			redirect: '/detail/analysis' //当访问/detail路由时，会重定向到/detail/analysis
+			component: lesson2,
+			children: [
+				{
+					path: 'analysis',
+					component: lesson3
+				}
+			]
+		}
+	]
+})
+
+router.beforEach(){}//在路由切换前设定一些操作
+router.push()//编程式导航
+
+new Vue({
+	el: '#app',
+	router,
+	directives: {
+		color: function(el, binding) {
+			el.style.color = binding.value
+		}
+	}
+})
+
+<transition>
+	<keep-alive>
+		<router-view name="viewA"></router-view> //name：命名视图
+		<router-view name="viewB"></router-view>
+		<router-link :to="{path:'/orderList',parama:{color:'red',type:3}}">to lesson1</router-link>
+		//path为定向的地址，parama为传入的参数
+		<router-link :to="{name:'detailPage'}" tag="li">to lesson2</router-link>
+		//tag：可以指定链接信息放入什么标签中，name：通过链接名访问链接内容
+	</keep-alive>
+</transition>
+//可以使用transition和keep-alive处理切换路由的过渡样式并缓存
