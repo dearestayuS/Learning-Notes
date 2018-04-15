@@ -1,5 +1,5 @@
 /*===============================================================================
-								js动画过渡
+					js动画过渡
 1、js钩子：<transition
   v-on:before-enter="beforeEnter"
   v-on:enter="enter"
