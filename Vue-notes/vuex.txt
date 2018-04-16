@@ -1,0 +1,58 @@
+/*==================================================================================
+                                 状态管理vuex总结
+1、安装vuex：npm install vuex --save
+2、导入路由vuex：import Vuex from 'vuex'
+3、使用Vue.use(Vuex)将vue与vuex关联
+4、配置一个store对象：let store = new Vuex
+5、在new Vue中写入store
+6、状态管理vuex原理（flax模型）：
+   Vue组件-----通过Dispatch----->访问Vuex.Store中的actions
+   Vuex.Store中的actions------通过commit----->访问Vuex.Store中的mutations（可以异步）
+   Vuex.Store中的mutations----->更改Vuex.Store的state，即数据状态（同步更改）
+   更改后的Vuex.Store的state------->反馈到有该state的所有组件
+====================================================================================*/
+
+let store = new Vuex.Store({
+	state: {
+		totalPrice: 0
+	},
+	mutations: { //mutations只能同步触发
+		increment (state, price){
+			state.totalPrice += price
+		},
+		decrement (state, price){
+			state.totalPrice -= price
+		}
+	},
+	actions: { //action可以进行异步的操作再触发mutations
+		increase(context, price) {
+			context.commit('increment', price)
+		}
+	},
+	getters: {
+		getTotal (state){
+			return state.totalPrice
+		}
+	}
+})
+
+//Modules
+const moduleA = {
+	state: { ... },
+	mutations: { ... },
+	actions: { ... },
+	getters: { ... }
+}
+const moduleB = {
+	state: { ... },
+	mutations: { ... },
+	actions: { ... },
+	getters: { ... }
+}
+
+let store = new Vuex.Store({
+	modules:{
+		a: moduleA, 
+		b: moduleB
+	}
+})
