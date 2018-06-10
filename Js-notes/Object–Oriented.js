@@ -196,7 +196,10 @@ console.log(s1.getName());  // ming
 console.log(s1.getAge());   // 22
 console.log(s1.getGrade()); // 5
 
-//其中Object.create方法原理为：
+/*其中Object.create方法原理为：
+proto：要继承的对象
+options：要修改和增加的属性
+*/
 function create(proto, options) {
     // 创建一个空对象
     var tmp = {};
