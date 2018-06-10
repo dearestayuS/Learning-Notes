@@ -86,16 +86,125 @@ console.log(p1 instanceof Person); // true
 /*======原型模式======*/
 // 声明构造函数
 function Person(name, age) {
+	//通过this声明的属性与方法称为私有变量与方法
     this.name = name;
     this.age = age;
 }
 
 // 通过prototye属性，将方法挂载到原型对象上
+//通过原型声明的属性与方法，称为共有属性与方法
 Person.prototype.getName = function() {
     return this.name;
 }
 
+//当访问实例对象中的属性或方法时，会优先访问私有属性或方法
 var p1 = new Person('tim', 10);
 var p2 = new Person('jak', 22);
 console.log(p1.getName === p2.getName); // true
 <img src="img/prototype.png">
+
+//更简单的原型写法
+function Person() {}
+
+Person.prototype = {
+	//在创建过程中为保证正确性，设置constructor的指向为Person
+    constructor: Person,
+    getName: function() {},
+    getAge: function() {},
+    sayHello: function() {}
+}
+
+/*======原型链======
+一个实例对象为原型链的起点，Object.prototype为原型链的终点*/
+//一个function foo(){}的原型链
+<img src="img/prototype-link.png">
+
+
+/*======构造函数继承======*/
+//使用call/apply的方式实现继承：即将父类对象的构造函数在子类对象中实现一编
+function Person(name, age) {
+    this.name = name;
+    this.age = age;
+}
+
+Person.prototype.getName = function() {
+    return this.name;
+}
+function cPerson(name, age, job) {
+    Person.call(this, name, age);
+    this.job = job;
+}
+
+/*======原型继承======*/
+//将子级的原型对象设置为父级的一个实例，加入到原型链中即可。
+function Person(name, age) {
+    this.name = name;
+    this.age = age;
+};
+
+function cPerson(){};
+Person.prototype.getName = function() {
+    return this.name;
+};
+
+cPerson.prototype = new Person('a', 25);
+/*c1.__proto__-->cPerson.prototype:
+             constructor-->function cPerson
+                 Person.prototype-->Person.prototype:
+                               constructor-->function Person
+                                    function getName
+                                      __proto__-->Object.prototype:
+                                                    constructor-->function Object
+                                                      __proto__:null*/
+c1 = new cPerson();
+
+//更好的继承
+function Person(name, age) {
+    this.name = name;
+    this.age = age;
+}
+Person.prototype.getName = function() {
+    return this.name
+}
+Person.prototype.getAge = function() {
+    return this.age;
+}
+
+function Student(name, age, grade) {
+    // 构造函数继承
+    Person.call(this, name, age);
+    this.grade = grade;
+}
+
+// 原型继承
+Student.prototype = Object.create(Person.prototype, {
+    // 不要忘了重新指定构造函数
+    constructor: {
+        value: Student
+    }
+    getGrade: {
+        value: function() {
+            return this.grade
+        }
+    }
+})
+
+
+var s1 = new Student('ming', 22, 5);
+
+console.log(s1.getName());  // ming
+console.log(s1.getAge());   // 22
+console.log(s1.getGrade()); // 5
+
+//其中Object.create方法原理为：
+function create(proto, options) {
+    // 创建一个空对象
+    var tmp = {};
+
+    // 让这个新的空对象成为父类对象的实例
+    tmp.__proto__ = proto;
+
+    // 传入的方法都挂载到新对象上，新的对象将作为子类对象的原型
+    Object.defineProperties(tmp, options);
+    return tmp;
+}
